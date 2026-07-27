@@ -229,7 +229,11 @@ async def click_first_matching(page: Page, selectors: list[str]) -> None:
 
 
 async def login(page: Page, settings: Settings) -> None:
-    await page.goto(LOGIN_URL, wait_until="networkidle")
+    await page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=90000)
+    try:
+        await page.wait_for_load_state("networkidle", timeout=20000)
+    except PlaywrightTimeoutError:
+        pass
     await page.wait_for_timeout(1000)
     await fill_first_matching(
         page,
