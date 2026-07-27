@@ -1,0 +1,39 @@
+name: LCN scheduler
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Colombia is UTC-5. This runs every 10 minutes from 6:00 AM to 7:10 PM Colombia.
+    - cron: "*/10 11-23 * * *"
+    - cron: "0,10 0 * * *"
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Try scheduling
+        env:
+          LCN_EMAIL: ${{ secrets.LCN_EMAIL }}
+          LCN_PASSWORD: ${{ secrets.LCN_PASSWORD }}
+          LCN_MAX_CLASSES: ${{ vars.LCN_MAX_CLASSES || '99' }}
+          LCN_SEDE: Sede Aves Maria (Sabaneta)
+          LCN_TIPO_CLASE: Clase
+          LCN_PREFERRED_TIMES: ${{ vars.LCN_PREFERRED_TIMES || '6:00 AM,7:30 AM,9:00 AM,10:30 AM,12:00 PM,1:30 PM,3:00 PM,4:30 PM,6:00 PM,7:00 PM' }}
+          LCN_SATURDAY_TIMES: ${{ vars.LCN_SATURDAY_TIMES || '9:45 AM,11:15 AM,1:30 PM,3:00 PM' }}
+          LCN_HEADLESS: "true"
+          LCN_RUN_START: "06:00"
+          LCN_RUN_END: "19:10"
+          LCN_POLL_SECONDS: "600"
+        run: python lcn_scheduler.py
