@@ -37,3 +37,11 @@ jobs:
           LCN_RUN_END: "19:10"
           LCN_POLL_SECONDS: "600"
         run: python lcn_scheduler.py
+
+      - name: Upload debug files
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcn-debug
+          path: debug/
+          if-no-files-found: ignore
