@@ -202,7 +202,7 @@ async def fill_first_matching(page: Page, selectors: list[str], value: str) -> N
     for selector in selectors:
         try:
             locator = page.locator(selector).first
-            await locator.wait_for(state="visible", timeout=4000)
+            await locator.wait_for(state="visible", timeout=15000)
             await locator.fill(value)
             current_value = await locator.input_value()
             if current_value != value:
@@ -240,8 +240,11 @@ async def login(page: Page, settings: Settings) -> None:
         [
             "input[type='email']",
             "input[name='email']",
+            "input[id*='email' i]",
+            "input[name*='email' i]",
             "input[placeholder*='email' i]",
             "input:below(:text('Ingrese su email'))",
+            "form input[type='text']",
         ],
         settings.email,
     )
@@ -250,6 +253,8 @@ async def login(page: Page, settings: Settings) -> None:
         [
             "input[type='password']",
             "input[name='password']",
+            "input[id*='password' i]",
+            "input[name*='password' i]",
             "input[placeholder*='contraseña' i]",
             "input:below(:text('Ingrese su contraseña'))",
         ],
@@ -476,7 +481,11 @@ async def run_once(settings: Settings) -> int:
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=settings.headless)
         page = await browser.new_page(viewport={"width": 1366, "height": 768})
-        await login(page, settings)
+        try:
+            await login(page, settings)
+        except Exception:
+            await save_debug(page, "login-error")
+            raise
 
         for plan in available_target_plans(settings):
             if scheduled >= settings.max_classes:
