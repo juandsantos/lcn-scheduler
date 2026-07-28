@@ -2,10 +2,6 @@ name: LCN scheduler
 
 on:
   workflow_dispatch:
-  schedule:
-    # Colombia is UTC-5. This runs every 10 minutes from 6:00 AM to 7:10 PM Colombia.
-    - cron: "*/10 11-23 * * *"
-    - cron: "0,10 0 * * *"
 
 jobs:
   schedule:
