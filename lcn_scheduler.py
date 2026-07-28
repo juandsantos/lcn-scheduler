@@ -119,11 +119,15 @@ def minutes_from_time_text(text: str) -> int | None:
 
 def filter_unlocked_two_day_times(times: list[str], now: datetime) -> list[str]:
     current_minutes = now.hour * 60 + now.minute
-    return [
+    unlocked_times = [
         time_text
         for time_text in times
         if (minutes := minutes_from_time_text(time_text)) is not None and minutes <= current_minutes
     ]
+    if not unlocked_times:
+        return []
+
+    return [unlocked_times[-1], *unlocked_times[:-1]]
 
 
 def available_target_plans(settings: Settings, now: datetime | None = None) -> list[TargetPlan]:
