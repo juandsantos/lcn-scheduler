@@ -109,6 +109,23 @@ def target_times_for_date(settings: Settings, target: datetime) -> list[str]:
     return default_weekday_times(settings)
 
 
+def minutes_from_time_text(text: str) -> int | None:
+    normalized = normalize_time(text)
+    if not normalized:
+        return None
+    hour, minute = normalized.split(":")
+    return int(hour) * 60 + int(minute)
+
+
+def filter_unlocked_two_day_times(times: list[str], now: datetime) -> list[str]:
+    current_minutes = now.hour * 60 + now.minute
+    return [
+        time_text
+        for time_text in times
+        if (minutes := minutes_from_time_text(time_text)) is not None and minutes <= current_minutes
+    ]
+
+
 def available_target_plans(settings: Settings, now: datetime | None = None) -> list[TargetPlan]:
     """Tomorrow and the day after tomorrow, skipping Sundays."""
     now = now or datetime.now(BOGOTA_TZ)
@@ -122,7 +139,11 @@ def available_target_plans(settings: Settings, now: datetime | None = None) -> l
         target = BOGOTA_TZ.localize(datetime.combine(now.date() + timedelta(days=days_ahead), time()))
         if target.weekday() == 6:
             continue
-        plans.append(TargetPlan(target=target, times=target_times_for_date(settings, target)))
+        target_times = target_times_for_date(settings, target)
+        if days_ahead == 2:
+            target_times = filter_unlocked_two_day_times(target_times, now)
+        if target_times:
+            plans.append(TargetPlan(target=target, times=target_times))
 
     return plans
 

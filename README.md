@@ -2,7 +2,9 @@
 
 Este proyecto intenta agendar clases en tu cuenta de LCN usando siempre la hora de Colombia. En cada ejecucion prueba manana y pasado manana, saltando domingos.
 
-Cuando la fecha objetivo es sabado, usa horarios especiales: 9:45 AM, 11:15 AM, 1:30 PM y 3:00 PM. Por eso, el jueves intenta viernes con horario normal y sabado con horario especial. Si corre un sabado, salta domingo e intenta lunes.
+Cuando la fecha objetivo es sabado, usa horarios especiales: 9:45 AM, 11:15 AM, 1:30 PM y 3:00 PM. Por eso, el jueves intenta sabado con horario especial y luego viernes con horario normal. Si corre un sabado, salta domingo e intenta lunes.
+
+Para el objetivo de dos dias adelante, solo prueba horarios hasta la hora actual de Colombia. Por ejemplo, si hoy es martes y corre a las 10:00 AM, para el jueves solo intenta horarios de 10:00 AM o anteriores. Para el objetivo de manana, siempre prueba todos los horarios configurados.
 
 Usalo solo con tu propia cuenta y respetando las reglas de LCN. La idea es revisar con una frecuencia razonable, no saturar el portal ni saltarse captchas, bloqueos o limites.
 
