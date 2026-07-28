@@ -118,7 +118,7 @@ def available_target_plans(settings: Settings, now: datetime | None = None) -> l
         return [TargetPlan(target=monday, times=target_times_for_date(settings, monday))]
 
     plans: list[TargetPlan] = []
-    for days_ahead in (1, 2):
+    for days_ahead in (2, 1):
         target = BOGOTA_TZ.localize(datetime.combine(now.date() + timedelta(days=days_ahead), time()))
         if target.weekday() == 6:
             continue
